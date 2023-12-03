@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Modal } from './Modal';
 import { ChevronLeftIcon, ChevronRightIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/react/20/solid';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 const ApiDataTable = () => {
     const [apiData, setApiData] = useState([]);
@@ -185,7 +187,7 @@ const ApiDataTable = () => {
                 </div>
                 
                     <button onClick={handleDeleteSelected} disabled={selectedRows.length === 0}>
-                        Delete Selected
+                    <FontAwesomeIcon icon={faTrash} />
                     </button>
                 
             </div>
@@ -238,8 +240,8 @@ const ApiDataTable = () => {
                             <td className="text-center">{rowData.email}</td>
                             <td className="text-center">{rowData.role}</td>
                             <td className="text-center">
-                                <button onClick={() => handleEdit(rowData.id)}>Edit</button>
-                                <button onClick={() => handleDelete(rowData.id)}>Delete</button>
+                                <button onClick={() => handleEdit(rowData.id)} className="mr-4"><FontAwesomeIcon icon={faEdit} /></button>
+                                <button onClick={() => handleDelete(rowData.id)} className="mr-4"> <FontAwesomeIcon icon={faTrash} /></button>
                             </td>
                         </tr>
                     ))}
