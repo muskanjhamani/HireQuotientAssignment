@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal } from './Modal';
+import { ChevronLeftIcon, ChevronRightIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/react/20/solid';
 
 const ApiDataTable = () => {
     const [apiData, setApiData] = useState([]);
@@ -12,6 +13,7 @@ const ApiDataTable = () => {
     const [modalOpen, setModalOpen] = useState(false);
     // const [editedData, setEditedData] = useState({});
     const [selectedRows, setSelectedRows] = useState([]);
+    const [selectAll, setSelectAll] = useState(false);
     const rowsPerPage = 10;
 
     useEffect(() => {
@@ -32,15 +34,26 @@ const ApiDataTable = () => {
         setSearchTerm(term);
 
         // Filter data based on the search term
+        // const filtered = apiData.filter(rowData =>
+        //     Object.values(rowData).some(value =>
+        //         value.toString().toLowerCase().includes(term.toLowerCase())
+        //     )
+        // );
+
+        // setFilteredData(filtered);
+        // setCurrentPage(1); // Reset to the first page after search/filter
+    };
+
+    const handleSearch = () => {
         const filtered = apiData.filter(rowData =>
             Object.values(rowData).some(value =>
-                value.toString().toLowerCase().includes(term.toLowerCase())
+                value.toString().toLowerCase().includes(searchTerm.toLowerCase())
             )
         );
 
         setFilteredData(filtered);
-        setCurrentPage(1); // Reset to the first page after search/filter
-    };
+        setCurrentPage(1); 
+    }
 
     // Calculate the total number of pages based on filtered data and rows per page
     const totalPages = Math.ceil(filteredData.length / rowsPerPage);
@@ -121,13 +134,7 @@ const ApiDataTable = () => {
         setApiData((prevData) => prevData.filter((rowData) => !selectedRows.includes(rowData)));
         // Clear selected rows after deletion
         setSelectedRows([]);
-    };
-
-    // Handle row selection
-    const handleRowSelect = (row) => {
-        setSelectedRows((prevSelectedRows) =>
-            prevSelectedRows.includes(row) ? prevSelectedRows.filter((selectedRow) => selectedRow !== row) : [...prevSelectedRows, row]
-        );
+        setSelectAll(!selectAll);
     };
 
     // Handle row selection using checkboxes
@@ -144,33 +151,74 @@ const ApiDataTable = () => {
         });
     };
 
+    const handleSelectAllChange = () => {
+        setSelectAll(!selectAll);
+
+        if (!selectAll) {
+            // If "Select All" is checked, select all rows on the current page
+            setSelectedRows(currentData);
+        } else {
+            // If "Select All" is unchecked, deselect all rows on the current page
+            setSelectedRows([]);
+        }
+    };
+
     return (
-        <div>
-            <h2>API Data Table</h2>
-            <input
-                type="text"
-                placeholder="Search..."
-                value={searchTerm}
-                onChange={handleSearchChange}
-            />
-            <table>
+        <div className="relative overflow-x-auto shadow-md sm:rounded-lg m-7">
+            <h1 className='text-center underline'>Admin Dashboard</h1>
+            <div className="flex justify-between items-center m-7">
+                
+                <div>
+                    <input
+                        type="text"
+                        placeholder="Search..."
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                        className='m-2'
+                    />
+                    <button
+                        className="search-icon bg-green-500 text-white p-2 rounded"
+                        onClick={handleSearch}
+                    >
+                        Search
+                    </button>
+                </div>
+                
+                    <button onClick={handleDeleteSelected} disabled={selectedRows.length === 0}>
+                        Delete Selected
+                    </button>
+                
+            </div>
+            
+
+            <table className="w-full text-sm text-gray-500 dark:text-gray-400">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th>Action</th>
+                        <th className="text-center">
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    checked={selectAll}
+                                    onChange={handleSelectAllChange}
+                                    className="cursor-pointer"
+                                />
+                            </label>
+                        </th>
+                        <th className="text-center">Name</th>
+                        <th className="text-center">Email</th>
+                        <th className="text-center">Role</th>
+                        <th className="text-center">Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     {currentData.map((rowData) => (
                         <tr
+                            className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                             key={rowData.id}
                             style={{ backgroundColor: selectedRows.includes(rowData) ? '#ccc' : 'inherit' }}
                             onClick={() => handleCheckboxChange(rowData)}
                         >
-                            <td style={{ cursor: 'pointer' }}>
+                            <td className="w-4 p-4" style={{ cursor: 'pointer' }}>
                                 <label>
                                     <input
                                         type="checkbox"
@@ -185,11 +233,11 @@ const ApiDataTable = () => {
                                 </label>
                             </td>
 
-                            <td>{rowData.id}</td>
-                            <td>{rowData.name}</td>
-                            <td>{rowData.email}</td>
-                            <td>{rowData.role}</td>
-                            <td>
+                            {/* <td></td> */}
+                            <td className="text-center">{rowData.name}</td>
+                            <td className="text-center">{rowData.email}</td>
+                            <td className="text-center">{rowData.role}</td>
+                            <td className="text-center">
                                 <button onClick={() => handleEdit(rowData.id)}>Edit</button>
                                 <button onClick={() => handleDelete(rowData.id)}>Delete</button>
                             </td>
@@ -197,20 +245,38 @@ const ApiDataTable = () => {
                     ))}
                 </tbody>
             </table>
-            <div>
-                <button onClick={() => handlePageChange(1)} disabled={currentPage === 1}>First Page</button>
-                <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>Previous Page</button>
-                <span>{`Page ${currentPage} of ${totalPages}`}</span>
-                <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>Next Page</button>
-                <button onClick={() => handlePageChange(totalPages)} disabled={currentPage === totalPages}>Last Page</button>
-            </div>
-
-            <div>
-                <button onClick={handleDeleteSelected} disabled={selectedRows.length === 0}>
-                    Delete Selected
+            <div className="flex items-center justify-center mt-4">
+                <button
+                    onClick={() => handlePageChange(1)}
+                    disabled={currentPage === 1}
+                    className="flex items-center px-4 py-2 mr-2 text-black rounded-md cursor-pointer"
+                >
+                    <ChevronDoubleLeftIcon className="w-4 h-4" /> {/* Example: ArrowLeft SVG icon */}
+                </button>
+                <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="flex items-center px-4 py-2 mr-2 text-black rounded-md cursor-pointer"
+                >
+                    <ChevronLeftIcon className="w-4 h-4" /> {/* Example: ArrowLeft SVG icon */}
+                </button>
+                <span className="text-gray-800">{`Page ${currentPage} of ${totalPages}`}</span>
+                <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="flex items-center px-4 py-2 ml-2 text-black rounded-md cursor-pointer"
+                >
+                    <ChevronRightIcon className="w-4 h-4" /> {/* Example: ArrowRight SVG icon */}
+                </button>
+                <button
+                    onClick={() => handlePageChange(totalPages)}
+                    disabled={currentPage === totalPages}
+                    className="flex items-center px-4 py-2 ml-2 text-black rounded-md cursor-pointer"
+                >
+                    <ChevronDoubleRightIcon className="w-4 h-4" /> {/* Example: ArrowRight SVG icon */}
                 </button>
             </div>
-            {/* console.log(rowToEdit); */}
+
             {modalOpen && (
                 <Modal
                     closeModal={() => {
