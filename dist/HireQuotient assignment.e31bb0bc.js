@@ -54138,9 +54138,6 @@ var ApiDataTable = function ApiDataTable() {
       key: rowData.id,
       style: {
         backgroundColor: selectedRows.includes(rowData) ? '#ccc' : 'inherit'
-      },
-      onClick: function onClick() {
-        return handleCheckboxChange(rowData);
       }
     }, /*#__PURE__*/_react.default.createElement("td", {
       className: "w-4 p-4 ",

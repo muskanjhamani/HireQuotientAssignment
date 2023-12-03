@@ -187,7 +187,6 @@ const ApiDataTable = () => {
                             className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
                             key={rowData.id}
                             style={{ backgroundColor: selectedRows.includes(rowData) ? '#ccc' : 'inherit' }}
-                            onClick={() => handleCheckboxChange(rowData)}
                         >
                             <td className="w-4 p-4 " style={{ cursor: 'pointer' }}>
                                 <label className="flex items-center cursor-pointer">
