@@ -20,7 +20,7 @@ const ApiDataTable = () => {
     const startIndex = (currentPage - 1) * rowsPerPage;
     const endIndex = startIndex + rowsPerPage;
     const currentData = filteredData.slice(startIndex, endIndex);
-    
+
     useEffect(() => {
         // Fetch data from the API
         fetch('https://geektrust.s3-ap-southeast-1.amazonaws.com/adminui-problem/members.json')
@@ -31,7 +31,7 @@ const ApiDataTable = () => {
                 setFilteredData(data); // Initialize filteredData with the full data set
             })
             .catch(error => console.error('Error fetching data:', error));
-    }, []); 
+    }, []);
 
     // Handle search input change
     const handleSearchChange = (event) => {
@@ -47,7 +47,7 @@ const ApiDataTable = () => {
         );
 
         setFilteredData(filtered);
-        setCurrentPage(1); 
+        setCurrentPage(1);
     }
 
     // Calculate the total number of pages based on filtered data and rows per page
@@ -58,7 +58,6 @@ const ApiDataTable = () => {
     };
 
     const handleEdit = (id) => {
-        console.log(id);
         setRowToEdit(id);
         setModalOpen(true);
     };
@@ -82,7 +81,6 @@ const ApiDataTable = () => {
                     // If the element is not found, you may handle it accordingly (e.g., add it to the end)
                     updatedData.push(newRow);
                 }
-                console.log(updatedData);
                 return updatedData;
             });
             setFilteredData(prevApiData => {
@@ -96,7 +94,6 @@ const ApiDataTable = () => {
                     // If the element is not found, you may handle it accordingly (e.g., add it to the end)
                     updatedData.push(newRow);
                 }
-                console.log(updatedData);
                 return updatedData;
             });
         }
@@ -108,21 +105,16 @@ const ApiDataTable = () => {
         setApiData((prevData) => prevData.filter((rowData) => !selectedRows.includes(rowData)));
         // Clear selected rows after deletion
         setSelectedRows([]);
-        setSelectAll(!selectAll);
+        (selectAll) ? setSelectAll(!selectAll) : '';
     };
 
     // Handle row selection using checkboxes
     const handleCheckboxChange = (row) => {
-        setSelectedRows((prevSelectedRows) => {
-            const isRowSelected = prevSelectedRows.includes(row);
-            if (isRowSelected) {
-                // If row is already selected, deselect it
-                return prevSelectedRows.filter((selectedRow) => selectedRow !== row);
-            } else {
-                // If row is not selected, select it
-                return [...prevSelectedRows, row];
-            }
-        });
+        const updatedSelectedRows = selectedRows.includes(row)
+            ? selectedRows.filter((selectedRow) => selectedRow.id !== row.id)
+            : [...selectedRows, row];
+
+        setSelectedRows(updatedSelectedRows);
     };
 
     const handleSelectAllChange = () => {
@@ -139,16 +131,21 @@ const ApiDataTable = () => {
 
     return (
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg m-7">
-            <h1 className='text-center underline'>Admin Dashboard</h1>
+            <h1 className='mb-2 text-2xl font-bold leading-none tracking-tight text-gray-900 md:text-2xl lg:text-3xl dark:text-white text-center'>Admin Dashboard</h1>
             <div className="flex justify-between items-center m-7">
-                
-                <div>
+
+                <div className="flex items-center space-x-2 m-2">
+                    <span className="text-gray-400">
+                        <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                        </svg>
+                    </span>
                     <input
                         type="text"
                         placeholder="Search..."
                         value={searchTerm}
                         onChange={handleSearchChange}
-                        className='m-2'
+                        className="p-2 border rounded"
                     />
                     <button
                         className="search-icon bg-green-500 text-white p-2 rounded"
@@ -157,15 +154,15 @@ const ApiDataTable = () => {
                         Search
                     </button>
                 </div>
-                
-                    <button onClick={handleDeleteSelected} disabled={selectedRows.length === 0}>
-                    <FontAwesomeIcon icon={faTrash} />
-                    </button>
-                
-            </div>
-            
 
-            <table className="w-full text-sm text-gray-500 dark:text-gray-400">
+                <button onClick={handleDeleteSelected} disabled={selectedRows.length === 0}>
+                    <FontAwesomeIcon icon={faTrash} />
+                </button>
+
+            </div>
+
+
+            <table className="w-full text-sm text-gray-800 dark:text-gray-400">
                 <thead>
                     <tr>
                         <th className="text-center">
@@ -174,7 +171,7 @@ const ApiDataTable = () => {
                                     type="checkbox"
                                     checked={selectAll}
                                     onChange={handleSelectAllChange}
-                                    className="cursor-pointer"
+                                    className="cursor-pointer mr-2 h-4 w-4"
                                 />
                             </label>
                         </th>
@@ -192,18 +189,15 @@ const ApiDataTable = () => {
                             style={{ backgroundColor: selectedRows.includes(rowData) ? '#ccc' : 'inherit' }}
                             onClick={() => handleCheckboxChange(rowData)}
                         >
-                            <td className="w-4 p-4" style={{ cursor: 'pointer' }}>
-                                <label>
+                            <td className="w-4 p-4 " style={{ cursor: 'pointer' }}>
+                                <label className="flex items-center cursor-pointer">
                                     <input
                                         type="checkbox"
                                         checked={selectedRows.some((selectedRow) => selectedRow.id === rowData.id)}
                                         onChange={() => handleCheckboxChange(rowData)}
-                                        style={{ display: 'none' }}
+                                        className="cursor-pointer mr-5 h-4 w-4"
                                     />
-                                    {/* Visible fake checkbox for styling */}
-                                    <span role="checkbox" aria-checked={selectedRows.some((selectedRow) => selectedRow.id === rowData.id)}>
-                                        {selectedRows.some((selectedRow) => selectedRow.id === rowData.id) ? '✔' : '■'}
-                                    </span>
+                                    <span>{rowData.name}</span>
                                 </label>
                             </td>
 
@@ -211,8 +205,8 @@ const ApiDataTable = () => {
                             <td className="text-center">{rowData.email}</td>
                             <td className="text-center">{rowData.role}</td>
                             <td className="text-center">
-                                <button onClick={() => handleEdit(rowData.id)} className="mr-4"><FontAwesomeIcon icon={faEdit} /></button>
-                                <button onClick={() => handleDelete(rowData.id)} className="mr-4"> <FontAwesomeIcon icon={faTrash} /></button>
+                                <button onClick={() => handleEdit(rowData.id)} className="mr-4 edit"><FontAwesomeIcon icon={faEdit} /></button>
+                                <button onClick={() => handleDelete(rowData.id)} className="mr-4 delete"> <FontAwesomeIcon icon={faTrash} /></button>
                             </td>
                         </tr>
                     ))}
@@ -222,14 +216,14 @@ const ApiDataTable = () => {
                 <button
                     onClick={() => handlePageChange(1)}
                     disabled={currentPage === 1}
-                    className="flex items-center px-4 py-2 mr-2 text-black rounded-md cursor-pointer"
+                    className="flex items-center px-4 py-2 mr-2 text-black rounded-md cursor-pointer first-page"
                 >
                     <ChevronDoubleLeftIcon className="w-4 h-4" /> {/* Example: ArrowLeft SVG icon */}
                 </button>
                 <button
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className="flex items-center px-4 py-2 mr-2 text-black rounded-md cursor-pointer"
+                    className="flex items-center px-4 py-2 mr-2 text-black rounded-md cursor-pointer previous-page"
                 >
                     <ChevronLeftIcon className="w-4 h-4" /> {/* Example: ArrowLeft SVG icon */}
                 </button>
@@ -237,14 +231,14 @@ const ApiDataTable = () => {
                 <button
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className="flex items-center px-4 py-2 ml-2 text-black rounded-md cursor-pointer"
+                    className="flex items-center px-4 py-2 ml-2 text-black rounded-md cursor-pointer next-page"
                 >
                     <ChevronRightIcon className="w-4 h-4" /> {/* Example: ArrowRight SVG icon */}
                 </button>
                 <button
                     onClick={() => handlePageChange(totalPages)}
                     disabled={currentPage === totalPages}
-                    className="flex items-center px-4 py-2 ml-2 text-black rounded-md cursor-pointer"
+                    className="flex items-center px-4 py-2 ml-2 text-black rounded-md cursor-pointer last-page"
                 >
                     <ChevronDoubleRightIcon className="w-4 h-4" /> {/* Example: ArrowRight SVG icon */}
                 </button>

@@ -47,10 +47,6 @@ export const Modal = ({ closeModal, onSubmit, defaultValue }) => {
             <div className="modal">
                 <form>
                     <div className="form-group">
-                        <label htmlFor="id">Id</label>
-                        <input name="id" onChange={handleChange} value={formState.id} />
-                    </div>
-                    <div className="form-group">
                         <label htmlFor="name">Name</label>
                         <input name="name" onChange={handleChange} value={formState.name} />
                     </div>

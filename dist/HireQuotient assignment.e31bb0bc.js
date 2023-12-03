@@ -28964,14 +28964,6 @@ var Modal = exports.Modal = function Modal(_ref) {
   }, /*#__PURE__*/_react.default.createElement("form", null, /*#__PURE__*/_react.default.createElement("div", {
     className: "form-group"
   }, /*#__PURE__*/_react.default.createElement("label", {
-    htmlFor: "id"
-  }, "Id"), /*#__PURE__*/_react.default.createElement("input", {
-    name: "id",
-    onChange: handleChange,
-    value: formState.id
-  })), /*#__PURE__*/_react.default.createElement("div", {
-    className: "form-group"
-  }, /*#__PURE__*/_react.default.createElement("label", {
     htmlFor: "name"
   }, "Name"), /*#__PURE__*/_react.default.createElement("input", {
     name: "name",
@@ -54005,7 +53997,6 @@ var ApiDataTable = function ApiDataTable() {
     setCurrentPage(page);
   };
   var handleEdit = function handleEdit(id) {
-    console.log(id);
     setRowToEdit(id);
     setModalOpen(true);
   };
@@ -54036,7 +54027,6 @@ var ApiDataTable = function ApiDataTable() {
           // If the element is not found, you may handle it accordingly (e.g., add it to the end)
           updatedData.push(newRow);
         }
-        console.log(updatedData);
         return updatedData;
       });
       setFilteredData(function (prevApiData) {
@@ -54051,7 +54041,6 @@ var ApiDataTable = function ApiDataTable() {
           // If the element is not found, you may handle it accordingly (e.g., add it to the end)
           updatedData.push(newRow);
         }
-        console.log(updatedData);
         return updatedData;
       });
     }
@@ -54070,23 +54059,15 @@ var ApiDataTable = function ApiDataTable() {
     });
     // Clear selected rows after deletion
     setSelectedRows([]);
-    setSelectAll(!selectAll);
+    selectAll ? setSelectAll(!selectAll) : '';
   };
 
   // Handle row selection using checkboxes
   var handleCheckboxChange = function handleCheckboxChange(row) {
-    setSelectedRows(function (prevSelectedRows) {
-      var isRowSelected = prevSelectedRows.includes(row);
-      if (isRowSelected) {
-        // If row is already selected, deselect it
-        return prevSelectedRows.filter(function (selectedRow) {
-          return selectedRow !== row;
-        });
-      } else {
-        // If row is not selected, select it
-        return [].concat(_toConsumableArray(prevSelectedRows), [row]);
-      }
-    });
+    var updatedSelectedRows = selectedRows.includes(row) ? selectedRows.filter(function (selectedRow) {
+      return selectedRow.id !== row.id;
+    }) : [].concat(_toConsumableArray(selectedRows), [row]);
+    setSelectedRows(updatedSelectedRows);
   };
   var handleSelectAllChange = function handleSelectAllChange() {
     setSelectAll(!selectAll);
@@ -54101,15 +54082,31 @@ var ApiDataTable = function ApiDataTable() {
   return /*#__PURE__*/_react.default.createElement("div", {
     className: "relative overflow-x-auto shadow-md sm:rounded-lg m-7"
   }, /*#__PURE__*/_react.default.createElement("h1", {
-    className: "text-center underline"
+    className: "mb-2 text-2xl font-bold leading-none tracking-tight text-gray-900 md:text-2xl lg:text-3xl dark:text-white text-center"
   }, "Admin Dashboard"), /*#__PURE__*/_react.default.createElement("div", {
     className: "flex justify-between items-center m-7"
-  }, /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement("input", {
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    className: "flex items-center space-x-2 m-2"
+  }, /*#__PURE__*/_react.default.createElement("span", {
+    className: "text-gray-400"
+  }, /*#__PURE__*/_react.default.createElement("svg", {
+    className: "w-4 h-4 text-gray-500 dark:text-gray-400",
+    "aria-hidden": "true",
+    xmlns: "http://www.w3.org/2000/svg",
+    fill: "none",
+    viewBox: "0 0 20 20"
+  }, /*#__PURE__*/_react.default.createElement("path", {
+    stroke: "currentColor",
+    "stroke-linecap": "round",
+    "stroke-linejoin": "round",
+    "stroke-width": "2",
+    d: "m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+  }))), /*#__PURE__*/_react.default.createElement("input", {
     type: "text",
     placeholder: "Search...",
     value: searchTerm,
     onChange: handleSearchChange,
-    className: "m-2"
+    className: "p-2 border rounded"
   }), /*#__PURE__*/_react.default.createElement("button", {
     className: "search-icon bg-green-500 text-white p-2 rounded",
     onClick: handleSearch
@@ -54119,14 +54116,14 @@ var ApiDataTable = function ApiDataTable() {
   }, /*#__PURE__*/_react.default.createElement(_reactFontawesome.FontAwesomeIcon, {
     icon: _freeSolidSvgIcons.faTrash
   }))), /*#__PURE__*/_react.default.createElement("table", {
-    className: "w-full text-sm text-gray-500 dark:text-gray-400"
+    className: "w-full text-sm text-gray-800 dark:text-gray-400"
   }, /*#__PURE__*/_react.default.createElement("thead", null, /*#__PURE__*/_react.default.createElement("tr", null, /*#__PURE__*/_react.default.createElement("th", {
     className: "text-center"
   }, /*#__PURE__*/_react.default.createElement("label", null, /*#__PURE__*/_react.default.createElement("input", {
     type: "checkbox",
     checked: selectAll,
     onChange: handleSelectAllChange,
-    className: "cursor-pointer"
+    className: "cursor-pointer mr-2 h-4 w-4"
   }))), /*#__PURE__*/_react.default.createElement("th", {
     className: "text-center"
   }, "Name"), /*#__PURE__*/_react.default.createElement("th", {
@@ -54146,11 +54143,13 @@ var ApiDataTable = function ApiDataTable() {
         return handleCheckboxChange(rowData);
       }
     }, /*#__PURE__*/_react.default.createElement("td", {
-      className: "w-4 p-4",
+      className: "w-4 p-4 ",
       style: {
         cursor: 'pointer'
       }
-    }, /*#__PURE__*/_react.default.createElement("label", null, /*#__PURE__*/_react.default.createElement("input", {
+    }, /*#__PURE__*/_react.default.createElement("label", {
+      className: "flex items-center cursor-pointer"
+    }, /*#__PURE__*/_react.default.createElement("input", {
       type: "checkbox",
       checked: selectedRows.some(function (selectedRow) {
         return selectedRow.id === rowData.id;
@@ -54158,17 +54157,8 @@ var ApiDataTable = function ApiDataTable() {
       onChange: function onChange() {
         return handleCheckboxChange(rowData);
       },
-      style: {
-        display: 'none'
-      }
-    }), /*#__PURE__*/_react.default.createElement("span", {
-      role: "checkbox",
-      "aria-checked": selectedRows.some(function (selectedRow) {
-        return selectedRow.id === rowData.id;
-      })
-    }, selectedRows.some(function (selectedRow) {
-      return selectedRow.id === rowData.id;
-    }) ? '✔' : '■'))), /*#__PURE__*/_react.default.createElement("td", {
+      className: "cursor-pointer mr-5 h-4 w-4"
+    }), /*#__PURE__*/_react.default.createElement("span", null, rowData.name))), /*#__PURE__*/_react.default.createElement("td", {
       className: "text-center"
     }, rowData.name), /*#__PURE__*/_react.default.createElement("td", {
       className: "text-center"
@@ -54180,14 +54170,14 @@ var ApiDataTable = function ApiDataTable() {
       onClick: function onClick() {
         return handleEdit(rowData.id);
       },
-      className: "mr-4"
+      className: "mr-4 edit"
     }, /*#__PURE__*/_react.default.createElement(_reactFontawesome.FontAwesomeIcon, {
       icon: _freeSolidSvgIcons.faEdit
     })), /*#__PURE__*/_react.default.createElement("button", {
       onClick: function onClick() {
         return handleDelete(rowData.id);
       },
-      className: "mr-4"
+      className: "mr-4 delete"
     }, " ", /*#__PURE__*/_react.default.createElement(_reactFontawesome.FontAwesomeIcon, {
       icon: _freeSolidSvgIcons.faTrash
     }))));
@@ -54198,7 +54188,7 @@ var ApiDataTable = function ApiDataTable() {
       return handlePageChange(1);
     },
     disabled: currentPage === 1,
-    className: "flex items-center px-4 py-2 mr-2 text-black rounded-md cursor-pointer"
+    className: "flex items-center px-4 py-2 mr-2 text-black rounded-md cursor-pointer first-page"
   }, /*#__PURE__*/_react.default.createElement(_solid.ChevronDoubleLeftIcon, {
     className: "w-4 h-4"
   }), " "), /*#__PURE__*/_react.default.createElement("button", {
@@ -54206,7 +54196,7 @@ var ApiDataTable = function ApiDataTable() {
       return handlePageChange(currentPage - 1);
     },
     disabled: currentPage === 1,
-    className: "flex items-center px-4 py-2 mr-2 text-black rounded-md cursor-pointer"
+    className: "flex items-center px-4 py-2 mr-2 text-black rounded-md cursor-pointer previous-page"
   }, /*#__PURE__*/_react.default.createElement(_solid.ChevronLeftIcon, {
     className: "w-4 h-4"
   }), " "), /*#__PURE__*/_react.default.createElement("span", {
@@ -54216,7 +54206,7 @@ var ApiDataTable = function ApiDataTable() {
       return handlePageChange(currentPage + 1);
     },
     disabled: currentPage === totalPages,
-    className: "flex items-center px-4 py-2 ml-2 text-black rounded-md cursor-pointer"
+    className: "flex items-center px-4 py-2 ml-2 text-black rounded-md cursor-pointer next-page"
   }, /*#__PURE__*/_react.default.createElement(_solid.ChevronRightIcon, {
     className: "w-4 h-4"
   }), " "), /*#__PURE__*/_react.default.createElement("button", {
@@ -54224,7 +54214,7 @@ var ApiDataTable = function ApiDataTable() {
       return handlePageChange(totalPages);
     },
     disabled: currentPage === totalPages,
-    className: "flex items-center px-4 py-2 ml-2 text-black rounded-md cursor-pointer"
+    className: "flex items-center px-4 py-2 ml-2 text-black rounded-md cursor-pointer last-page"
   }, /*#__PURE__*/_react.default.createElement(_solid.ChevronDoubleRightIcon, {
     className: "w-4 h-4"
   }), " ")), modalOpen && /*#__PURE__*/_react.default.createElement(_Modal.Modal, {
