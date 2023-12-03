@@ -9,15 +9,18 @@ const ApiDataTable = () => {
     const [filteredData, setFilteredData] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
-    // const [editModalOpen, setEditModalOpen] = useState(false);
-    // const [editedRow, setEditedRow] = useState(null);
     const [rowToEdit, setRowToEdit] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
-    // const [editedData, setEditedData] = useState({});
     const [selectedRows, setSelectedRows] = useState([]);
     const [selectAll, setSelectAll] = useState(false);
     const rowsPerPage = 10;
+    const totalPages = Math.ceil(filteredData.length / rowsPerPage);
 
+    // Get the current page data based on rows per page and current page number
+    const startIndex = (currentPage - 1) * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
+    const currentData = filteredData.slice(startIndex, endIndex);
+    
     useEffect(() => {
         // Fetch data from the API
         fetch('https://geektrust.s3-ap-southeast-1.amazonaws.com/adminui-problem/members.json')
@@ -28,22 +31,12 @@ const ApiDataTable = () => {
                 setFilteredData(data); // Initialize filteredData with the full data set
             })
             .catch(error => console.error('Error fetching data:', error));
-    }, []); // Empty dependency array ensures the effect runs only once, equivalent to componentDidMount
+    }, []); 
 
     // Handle search input change
     const handleSearchChange = (event) => {
         const term = event.target.value;
         setSearchTerm(term);
-
-        // Filter data based on the search term
-        // const filtered = apiData.filter(rowData =>
-        //     Object.values(rowData).some(value =>
-        //         value.toString().toLowerCase().includes(term.toLowerCase())
-        //     )
-        // );
-
-        // setFilteredData(filtered);
-        // setCurrentPage(1); // Reset to the first page after search/filter
     };
 
     const handleSearch = () => {
@@ -58,12 +51,6 @@ const ApiDataTable = () => {
     }
 
     // Calculate the total number of pages based on filtered data and rows per page
-    const totalPages = Math.ceil(filteredData.length / rowsPerPage);
-
-    // Get the current page data based on rows per page and current page number
-    const startIndex = (currentPage - 1) * rowsPerPage;
-    const endIndex = startIndex + rowsPerPage;
-    const currentData = filteredData.slice(startIndex, endIndex);
 
     // Handle pagination button click
     const handlePageChange = (page) => {
@@ -72,21 +59,14 @@ const ApiDataTable = () => {
 
     const handleEdit = (id) => {
         console.log(id);
-        // setEditModalOpen(true);
         setRowToEdit(id);
         setModalOpen(true);
-        // setEditedData({ ...row, name: row.name || '', email: row.email || '', role: row.role || '' });
     };
-
 
     const handleDelete = (id) => {
         // Remove the row from the filtered data and API data
         setFilteredData(prevData => prevData.filter(rowData => rowData.id !== id));
         setApiData(prevData => prevData.filter(rowData => rowData.id !== id));
-    };
-
-    const handleModalClose = () => {
-        setEditModalOpen(false);
     };
 
     const handleSubmit = (newRow) => {
@@ -120,14 +100,6 @@ const ApiDataTable = () => {
                 return updatedData;
             });
         }
-
-
-        // console.log(apiData);
-    };
-
-    const handleInputChange = (event) => {
-        const { name, value } = event.target;
-        setEditedData((prevData) => ({ ...prevData, [name]: value }));
     };
 
     const handleDeleteSelected = () => {
@@ -235,7 +207,6 @@ const ApiDataTable = () => {
                                 </label>
                             </td>
 
-                            {/* <td></td> */}
                             <td className="text-center">{rowData.name}</td>
                             <td className="text-center">{rowData.email}</td>
                             <td className="text-center">{rowData.role}</td>
@@ -289,30 +260,6 @@ const ApiDataTable = () => {
                     defaultValue={apiData[rowToEdit - 1]}
                 />
             )}
-
-            {/* {editModalOpen && (
-                <div className="modal">
-                    <div className="modal-content">
-                        <span className="close" onClick={handleModalClose}>
-                            &times;
-                        </span>
-                        <h2>Edit Row</h2>
-                        <label>
-                            Name:
-                            <input type="text" name="name" value={editedData.name} onChange={handleInputChange} />
-                        </label>
-                        <label>
-                            Email:
-                            <input type="text" name="email" value={editedData.email} onChange={handleInputChange} />
-                        </label>
-                        <label>
-                            Role:
-                            <input type="text" name="role" value={editedData.role} onChange={handleInputChange} />
-                        </label>
-                        <button onClick={handleSaveChanges}>Save Changes</button>
-                    </div>
-                </div>
-            )} */}
 
         </div>
     );

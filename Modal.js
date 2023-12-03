@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-
 import "./Modal.css";
 
 export const Modal = ({ closeModal, onSubmit, defaultValue }) => {
-    // console.log(defaultValue);
     const [formState, setFormState] = useState(
         defaultValue
     );
@@ -33,7 +31,6 @@ export const Modal = ({ closeModal, onSubmit, defaultValue }) => {
         e.preventDefault();
 
         if (!validateForm()) return;
-        // console.log(formState);
 
         onSubmit(formState);
 

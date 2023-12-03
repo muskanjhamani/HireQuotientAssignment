@@ -28919,7 +28919,6 @@ var Modal = exports.Modal = function Modal(_ref) {
   var closeModal = _ref.closeModal,
     onSubmit = _ref.onSubmit,
     defaultValue = _ref.defaultValue;
-  // console.log(defaultValue);
   var _useState = (0, _react.useState)(defaultValue),
     _useState2 = _slicedToArray(_useState, 2),
     formState = _useState2[0],
@@ -28952,8 +28951,6 @@ var Modal = exports.Modal = function Modal(_ref) {
   var handleSubmit = function handleSubmit(e) {
     e.preventDefault();
     if (!validateForm()) return;
-    // console.log(formState);
-
     onSubmit(formState);
     closeModal();
   };
@@ -53923,12 +53920,6 @@ var _reactFontawesome = require("@fortawesome/react-fontawesome");
 var _freeSolidSvgIcons = require("@fortawesome/free-solid-svg-icons");
 function _getRequireWildcardCache(e) { if ("function" != typeof WeakMap) return null; var r = new WeakMap(), t = new WeakMap(); return (_getRequireWildcardCache = function (e) { return e ? t : r; })(e); }
 function _interopRequireWildcard(e, r) { if (!r && e && e.__esModule) return e; if (null === e || "object" != typeof e && "function" != typeof e) return { default: e }; var t = _getRequireWildcardCache(r); if (t && t.has(e)) return t.get(e); var n = { __proto__: null }, a = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var u in e) if ("default" !== u && Object.prototype.hasOwnProperty.call(e, u)) { var i = a ? Object.getOwnPropertyDescriptor(e, u) : null; i && (i.get || i.set) ? Object.defineProperty(n, u, i) : n[u] = e[u]; } return n.default = e, t && t.set(e, n), n; }
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
-function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
-function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
-function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
@@ -53956,8 +53947,6 @@ var ApiDataTable = function ApiDataTable() {
     _useState8 = _slicedToArray(_useState7, 2),
     currentPage = _useState8[0],
     setCurrentPage = _useState8[1];
-  // const [editModalOpen, setEditModalOpen] = useState(false);
-  // const [editedRow, setEditedRow] = useState(null);
   var _useState9 = (0, _react.useState)(null),
     _useState10 = _slicedToArray(_useState9, 2),
     rowToEdit = _useState10[0],
@@ -53966,7 +53955,6 @@ var ApiDataTable = function ApiDataTable() {
     _useState12 = _slicedToArray(_useState11, 2),
     modalOpen = _useState12[0],
     setModalOpen = _useState12[1];
-  // const [editedData, setEditedData] = useState({});
   var _useState13 = (0, _react.useState)([]),
     _useState14 = _slicedToArray(_useState13, 2),
     selectedRows = _useState14[0],
@@ -53976,6 +53964,12 @@ var ApiDataTable = function ApiDataTable() {
     selectAll = _useState16[0],
     setSelectAll = _useState16[1];
   var rowsPerPage = 10;
+  var totalPages = Math.ceil(filteredData.length / rowsPerPage);
+
+  // Get the current page data based on rows per page and current page number
+  var startIndex = (currentPage - 1) * rowsPerPage;
+  var endIndex = startIndex + rowsPerPage;
+  var currentData = filteredData.slice(startIndex, endIndex);
   (0, _react.useEffect)(function () {
     // Fetch data from the API
     fetch('https://geektrust.s3-ap-southeast-1.amazonaws.com/adminui-problem/members.json').then(function (response) {
@@ -53987,22 +53981,12 @@ var ApiDataTable = function ApiDataTable() {
     }).catch(function (error) {
       return console.error('Error fetching data:', error);
     });
-  }, []); // Empty dependency array ensures the effect runs only once, equivalent to componentDidMount
+  }, []);
 
   // Handle search input change
   var handleSearchChange = function handleSearchChange(event) {
     var term = event.target.value;
     setSearchTerm(term);
-
-    // Filter data based on the search term
-    // const filtered = apiData.filter(rowData =>
-    //     Object.values(rowData).some(value =>
-    //         value.toString().toLowerCase().includes(term.toLowerCase())
-    //     )
-    // );
-
-    // setFilteredData(filtered);
-    // setCurrentPage(1); // Reset to the first page after search/filter
   };
   var handleSearch = function handleSearch() {
     var filtered = apiData.filter(function (rowData) {
@@ -54015,12 +53999,6 @@ var ApiDataTable = function ApiDataTable() {
   };
 
   // Calculate the total number of pages based on filtered data and rows per page
-  var totalPages = Math.ceil(filteredData.length / rowsPerPage);
-
-  // Get the current page data based on rows per page and current page number
-  var startIndex = (currentPage - 1) * rowsPerPage;
-  var endIndex = startIndex + rowsPerPage;
-  var currentData = filteredData.slice(startIndex, endIndex);
 
   // Handle pagination button click
   var handlePageChange = function handlePageChange(page) {
@@ -54028,10 +54006,8 @@ var ApiDataTable = function ApiDataTable() {
   };
   var handleEdit = function handleEdit(id) {
     console.log(id);
-    // setEditModalOpen(true);
     setRowToEdit(id);
     setModalOpen(true);
-    // setEditedData({ ...row, name: row.name || '', email: row.email || '', role: row.role || '' });
   };
   var handleDelete = function handleDelete(id) {
     // Remove the row from the filtered data and API data
@@ -54045,9 +54021,6 @@ var ApiDataTable = function ApiDataTable() {
         return rowData.id !== id;
       });
     });
-  };
-  var handleModalClose = function handleModalClose() {
-    setEditModalOpen(false);
   };
   var handleSubmit = function handleSubmit(newRow) {
     if (rowToEdit === newRow.id) {
@@ -54082,16 +54055,6 @@ var ApiDataTable = function ApiDataTable() {
         return updatedData;
       });
     }
-
-    // console.log(apiData);
-  };
-  var handleInputChange = function handleInputChange(event) {
-    var _event$target = event.target,
-      name = _event$target.name,
-      value = _event$target.value;
-    setEditedData(function (prevData) {
-      return _objectSpread(_objectSpread({}, prevData), {}, _defineProperty({}, name, value));
-    });
   };
   var handleDeleteSelected = function handleDeleteSelected() {
     // Remove selected rows from the filtered data and API data
@@ -54307,7 +54270,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56228" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51698" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
